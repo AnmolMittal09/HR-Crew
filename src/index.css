@@ -1,7 +1,143 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================= */
+/* Global Styles                 */
+/* ============================= */
 html {
   scroll-behavior: smooth;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #fff;
+  background: #111;
+}
+
+/* ============================= */
+/* Navbar                        */
+/* ============================= */
+nav {
+  width: 100%;
+}
+
+nav button {
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+nav button:hover {
+  color: #06b6d4;
+}
+
+/* ============================= */
+/* Sections                      */
+/* ============================= */
+section {
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+#home {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#about, #artists, #contact {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ============================= */
+/* Owner Cards                   */
+/* ============================= */
+.owner-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.owner-card:hover {
+  transform: translateY(-5px);
+}
+
+/* ============================= */
+/* Artists Grid                  */
+/* ============================= */
+.artists-grid {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .artists-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .artists-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================= */
+/* Responsive Adjustments        */
+/* ============================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  section {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  #home h1 {
+    font-size: 3rem;
+    text-align: center;
+  }
+  #home p {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  nav .desktop-menu {
+    display: none;
+  }
+
+  nav .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .owner-card {
+    width: 100%;
+    max-width: 250px;
+    margin-bottom: 2rem;
+  }
+}
