@@ -10,25 +10,27 @@ import Artist2Img from "./assets/artist2.jpg";
 import Artist3Img from "./assets/artist3.jpg";
 
 // Owner Card Component
-const OwnerCard = ({ img, name, role, delay = 0 }) => (
-  <motion.div
-    className="relative flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-500"
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.5 }}
-    transition={{ duration: 1, delay }}
-  >
-    <div className="relative w-64 h-64">
-      <img
-        src={img}
-        alt={name}
-        className="rounded-full w-64 h-64 object-cover border-4 border-cyan-400 shadow-lg"
-      />
-    </div>
-    <h3 className="mt-4 text-xl font-bold">{name}</h3>
-    <p className="text-gray-400 text-center max-w-xs mt-2">{role}</p>
-  </motion.div>
-);
+const OwnerCard = ({ img, name, role, delay = 0 }) => {
+  return (
+    <motion.div
+      className="relative flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-500"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 1, delay }}
+    >
+      <div className="relative w-64 h-64">
+        <img
+          src={img}
+          alt={name}
+          className="rounded-full w-64 h-64 object-cover border-4 border-cyan-400 shadow-lg"
+        />
+      </div>
+      <h3 className="mt-4 text-xl font-bold">{name}</h3>
+      <p className="text-gray-400 text-center max-w-xs mt-2">{role}</p>
+    </motion.div>
+  );
+};
 
 const HRCrewMusicStudio = () => {
   const [activeSection, setActiveSection] = useState("home");
@@ -37,7 +39,7 @@ const HRCrewMusicStudio = () => {
   const trailCanvasRef = useRef(null);
   const trailParticles = useRef([]);
 
-  // Active section on scroll
+  // Scroll active section
   useEffect(() => {
     const handleScroll = () => {
       const sections = ["home", "about", "artists", "contact"];
@@ -56,40 +58,63 @@ const HRCrewMusicStudio = () => {
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setActiveSection(id);
-    setMenuOpen(false); // close mobile menu after click
+    setMenuOpen(false);
   };
 
-  // Music Visualizer
+  // Music Visualizer with Bass Pulse
   useEffect(() => {
     const canvas = musicCanvasRef.current;
     const ctx = canvas.getContext("2d");
     let animationId;
 
+    let bars = [];
+
+    const initializeBars = (barCount) => {
+      bars = Array.from({ length: barCount }, () => Math.random() * 50 + 30);
+    };
+
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+
+      const barCount = window.innerWidth < 768 ? 40 : 80;
+      if (bars.length !== barCount) initializeBars(barCount);
     };
+
     resize();
     window.addEventListener("resize", resize);
 
-    const bars = Array.from({ length: 80 }, () => Math.random() * 100);
+    // Helper: simulate music spectrum
+    const getFakeSpectrum = (i, total) => {
+      const t = Date.now() * 0.002; // time
+      const phase = (i / total) * Math.PI * 2;
+      const low = Math.sin(t + phase) * 0.6 + 0.4; // bass
+      const mid = Math.sin(t * 1.5 + phase * 2) * 0.5 + 0.5; // mid
+      const high = Math.sin(t * 3 + phase * 4) * 0.3 + 0.7; // high
+      return (low + mid + high) / 3; // combine for smooth effect
+    };
 
     const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "rgba(10, 10, 15, 0.2)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       const barWidth = canvas.width / bars.length;
 
       bars.forEach((h, i) => {
-        bars[i] += Math.random() * 10 - 5;
-        if (bars[i] > 100) bars[i] = 100;
-        if (bars[i] < 10) bars[i] = 10;
+        const spectrum = getFakeSpectrum(i, bars.length);
+        const targetHeight = spectrum * 80; // scale to max 80
+
+        // Smoothly interpolate
+        bars[i] = bars[i] + (targetHeight - bars[i]) * 0.1;
 
         const x = i * barWidth;
         const barHeight = (bars[i] / 100) * (canvas.height / 2);
 
         const gradient = ctx.createLinearGradient(x, canvas.height - barHeight, x, canvas.height);
         gradient.addColorStop(0, "#ff00ff");
-        gradient.addColorStop(1, "#00ffff");
+        gradient.addColorStop(0.5, "#00ffff");
+        gradient.addColorStop(1, "#06b6d4");
 
         ctx.fillStyle = gradient;
         ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
@@ -97,6 +122,7 @@ const HRCrewMusicStudio = () => {
 
       animationId = requestAnimationFrame(draw);
     };
+
     draw();
 
     return () => {
@@ -105,7 +131,7 @@ const HRCrewMusicStudio = () => {
     };
   }, []);
 
-  // Sparkle Trail
+  // Sparkle Trail - Mobile Friendly
   useEffect(() => {
     const canvas = trailCanvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -162,16 +188,14 @@ const HRCrewMusicStudio = () => {
   ];
 
   return (
-    <div className="bg-gray-900 text-white relative">
+    <div className="bg-gray-900 text-white relative overflow-x-hidden">
       {/* Navbar */}
       <nav className="fixed w-full bg-black bg-opacity-70 backdrop-blur-md z-50">
         <div className="flex items-center w-full px-6 py-3">
-          {/* Logo */}
           <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
             HR CREW
           </h1>
 
-          {/* Desktop Nav */}
           <div className="ml-auto hidden md:flex space-x-6">
             {["home", "about", "artists", "contact"].map((item) => (
               <button
@@ -188,64 +212,44 @@ const HRCrewMusicStudio = () => {
             ))}
           </div>
 
-          {/* Mobile Hamburger */}
-          <button
-            className="ml-auto md:hidden text-white z-50"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
+          {/* Mobile Menu Toggle */}
+          <button className="ml-auto md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
 
-        {/* Mobile Dropdown Menu with Slide & Blur */}
-        <motion.div
-          initial={{ y: -200, opacity: 0 }}
-          animate={{ y: menuOpen ? 0 : -200, opacity: menuOpen ? 1 : 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="md:hidden fixed top-0 left-0 w-full bg-black/80 backdrop-blur-md flex flex-col items-center py-6 space-y-4 z-40"
-        >
-          {["home", "about", "artists", "contact"].map((item) => (
-            <button
-              key={item}
-              onClick={() => scrollToSection(item)}
-              className={`${
-                activeSection === item
-                  ? "text-cyan-400 border-b-2 border-cyan-400"
-                  : "text-gray-400"
-              } uppercase text-lg font-semibold`}
-            >
-              {item}
-            </button>
-          ))}
-        </motion.div>
+        {menuOpen && (
+          <div className="md:hidden bg-black bg-opacity-90 flex flex-col items-center py-4 space-y-4">
+            {["home", "about", "artists", "contact"].map((item) => (
+              <button
+                key={item}
+                onClick={() => scrollToSection(item)}
+                className={`${
+                  activeSection === item
+                    ? "text-cyan-400 border-b-2 border-cyan-400"
+                    : "text-gray-400"
+                } uppercase`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* Hero */}
-      <section
-        id="home"
-        className="relative h-screen flex items-center justify-center overflow-hidden"
-      >
+      <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
         <canvas ref={musicCanvasRef} className="absolute inset-0 z-10" />
-        <canvas
-          ref={trailCanvasRef}
-          className="fixed top-0 left-0 w-screen h-screen pointer-events-none z-20"
-        />
+        <canvas ref={trailCanvasRef} className="fixed top-0 left-0 w-screen h-screen pointer-events-none z-20" />
         <div className="absolute inset-0 bg-black/60 z-30" />
-        <motion.div
-          className="relative text-center z-40"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
+        <motion.div className="relative text-center z-40" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
           <h1 className="text-6xl font-bold">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
               HR CREW
             </span>
             <br /> MUSIC STUDIO
           </h1>
-          <p className="mt-6 text-gray-300 text-xl">
-            Where creativity meets technology 🎶
-          </p>
+          <p className="mt-6 text-gray-300 text-xl">Where creativity meets technology 🎶</p>
         </motion.div>
       </section>
 
@@ -253,17 +257,8 @@ const HRCrewMusicStudio = () => {
       <section id="about" className="py-20 bg-gray-800 text-center">
         <h2 className="text-4xl font-bold mb-10">About Us</h2>
         <div className="flex flex-col md:flex-row items-center justify-center gap-16">
-          <OwnerCard
-            img={AnmolImg}
-            name="Anmol Mittal"
-            role="Co-founder & Music Producer"
-          />
-          <OwnerCard
-            img={HarshImg}
-            name="Harsh Goyal"
-            role="Co-founder & Studio Manager"
-            delay={0.3}
-          />
+          <OwnerCard img={AnmolImg} name="Anmol Mittal" role="Co-founder & Music Producer" />
+          <OwnerCard img={HarshImg} name="Harsh Goyal" role="Co-founder & Studio Manager" delay={0.3} />
         </div>
       </section>
 
@@ -272,16 +267,8 @@ const HRCrewMusicStudio = () => {
         <h2 className="text-4xl font-bold mb-6">Featured Artists</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 px-6">
           {artists.map((artist, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.05 }}
-              className="bg-gray-800 p-6 rounded-lg transition-transform duration-500"
-            >
-              <img
-                src={artist.img}
-                alt={artist.name}
-                className="w-full h-48 object-cover rounded-lg mb-2"
-              />
+            <motion.div key={i} whileHover={{ scale: 1.05 }} className="bg-gray-800 p-6 rounded-lg transition-transform duration-500">
+              <img src={artist.img} alt={artist.name} className="w-full h-48 object-cover rounded-lg mb-2" />
               <h3 className="font-bold">{artist.name}</h3>
               <p className="text-gray-400">{artist.genre}</p>
             </motion.div>
@@ -297,7 +284,7 @@ const HRCrewMusicStudio = () => {
             <MapPin className="mr-2" /> 123 Music Avenue
           </p>
           <p className="flex items-center justify-center">
-            <Phone className="mr-2" /> 9717155406 , 7048998256
+            <Phone className="mr-2" /> +1 555 123456
           </p>
           <p className="flex items-center justify-center">
             <Mail className="mr-2" /> info@hrcrew.com
