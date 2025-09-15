@@ -98,12 +98,19 @@ const HRCrewMusicStudio = () => {
       />
 
       {/* Sections */}
-      <section ref={homeRef}><Hero /></section>
-      <section ref={aboutRef}><About /></section>
+      <section ref={homeRef} className="w-full min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-12">
+        <Hero />
+      </section>
+
+      <section ref={aboutRef} className="w-full py-16 px-4 sm:px-6 md:px-12 max-w-6xl mx-auto">
+        <About />
+      </section>
 
       {/* Artists Section */}
-      <section ref={artistsRef} className="py-16">
-        <h2 className="text-4xl font-bold text-center mb-10">Our Artists</h2>
+      <section ref={artistsRef} className="py-16 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10">
+          Our Artists
+        </h2>
         {loading ? (
           <p className="text-center text-gray-400">Loading artists...</p>
         ) : error ? (
@@ -114,7 +121,9 @@ const HRCrewMusicStudio = () => {
       </section>
 
       {/* Contact Section */}
-      <section ref={contactRef}><Contact /></section>
+      <section ref={contactRef} className="py-16 px-4 sm:px-6 md:px-12 max-w-5xl mx-auto">
+        <Contact />
+      </section>
     </div>
   );
 };
