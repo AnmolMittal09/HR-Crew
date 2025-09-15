@@ -1,26 +1,37 @@
+// api/spotify-token.js (Vercel serverless)
 export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-    const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
+    if (!clientId || !clientSecret) {
+      return res.status(500).json({ error: "Spotify credentials not set" });
+    }
+
+    const authString = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+
+    const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
       headers: {
+        Authorization: `Basic ${authString}`,
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization:
-          "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
       },
       body: "grant_type=client_credentials",
     });
 
-    const tokenData = await tokenRes.json();
+    const data = await response.json();
 
-    if (!tokenRes.ok) {
-      return res.status(500).json({ error: "Failed to fetch Spotify token", details: tokenData });
+    if (response.ok) {
+      res.status(200).json(data);
+    } else {
+      res.status(response.status).json({ error: data });
     }
-
-    res.status(200).json(tokenData);
   } catch (err) {
-    res.status(500).json({ error: "Server error", details: err.message });
+    console.error("Error fetching Spotify token:", err);
+    res.status(500).json({ error: "Failed to fetch token" });
   }
 }
