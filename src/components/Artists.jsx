@@ -8,20 +8,18 @@ const Artists = ({ spotifyData }) => {
           key={artist.id}
           className="bg-gray-800 rounded-xl p-4 text-center hover:scale-105 transition-transform"
         >
-          <img
-            src={artist.images[0]?.url || "/placeholder.png"}
-            alt={artist.name}
-            className="w-full h-56 object-cover rounded-lg mb-4"
-          />
-          <h3 className="text-xl font-semibold mb-2">{artist.name}</h3>
           <a
             href={artist.external_urls?.spotify}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block mt-3 text-green-400 hover:underline"
           >
-            View on Spotify
+            <img
+              src={artist.images[0]?.url || "/placeholder.png"}
+              alt={artist.name}
+              className="w-full h-56 object-cover rounded-lg mb-4 hover:opacity-90 transition-opacity"
+            />
           </a>
+          <h3 className="text-xl font-semibold">{artist.name}</h3>
         </div>
       ))}
     </div>
