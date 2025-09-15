@@ -2,19 +2,25 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaSpotify } from "react-icons/fa";
 
-const Artists = ({ spotifyToken, artistIds }) => {
+const Artists = ({ artistIds }) => {
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchArtists = async () => {
-      if (!spotifyToken || !artistIds?.length) return;
+      if (!artistIds?.length) return;
 
       try {
         setLoading(true);
         setError(null);
 
+        // 1️⃣ Get token from our serverless API route
+        const tokenRes = await fetch("/api/spotify-token");
+        const tokenData = await tokenRes.json();
+        const spotifyToken = tokenData.access_token;
+
+        // 2️⃣ Fetch all artist details
         const fetchedArtists = await Promise.all(
           artistIds.map(async (id) => {
             const res = await fetch(`https://api.spotify.com/v1/artists/${id}`, {
@@ -29,6 +35,7 @@ const Artists = ({ spotifyToken, artistIds }) => {
             };
           })
         );
+
         setArtists(fetchedArtists);
       } catch (err) {
         console.error(err);
@@ -39,7 +46,7 @@ const Artists = ({ spotifyToken, artistIds }) => {
     };
 
     fetchArtists();
-  }, [spotifyToken, artistIds]);
+  }, [artistIds]);
 
   if (loading) {
     return (
