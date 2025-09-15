@@ -6,44 +6,39 @@ import Artists from "./components/Artists";
 import Contact from "./components/Contact";
 
 const artistIds = [
-  "2ksQOaJEKZUywWIKeeZlJK",
+  "2ksQOaJEKZUywWIKeeZlJK", // Example Artist
   "7wi8IlXwOdKRyozkRKEeSr",
   "56yZJfVlHvxGyowJfihwH3",
 ];
 
 const HRCrewMusicStudio = () => {
-  const [spotifyToken, setSpotifyToken] = useState("");
-  const [loadingToken, setLoadingToken] = useState(true);
-  const [tokenError, setTokenError] = useState(null);
+  const [spotifyData, setSpotifyData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchToken = async () => {
+    const fetchArtists = async () => {
       try {
-        setLoadingToken(true);
-        setTokenError(null);
+        setLoading(true);
+        setError(null);
 
-        const res = await fetch("http://localhost:5000/spotify-token");
+        // call our vercel serverless API
+        const responses = await Promise.all(
+          artistIds.map((id) =>
+            fetch(`/api/spotify?artistId=${id}`).then((res) => res.json())
+          )
+        );
 
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        if (data.access_token) {
-          setSpotifyToken(data.access_token);
-        } else {
-          throw new Error("No access token returned from server");
-        }
+        setSpotifyData(responses);
       } catch (err) {
-        console.error("Failed to fetch Spotify token:", err);
-        setTokenError(err.message);
+        console.error("Failed to fetch artists:", err);
+        setError(err.message);
       } finally {
-        setLoadingToken(false);
+        setLoading(false);
       }
     };
 
-    fetchToken();
+    fetchArtists();
   }, []);
 
   return (
@@ -51,15 +46,15 @@ const HRCrewMusicStudio = () => {
       <Navbar />
       <Hero />
       <About />
-      
-      {loadingToken ? (
+
+      {loading ? (
         <p className="text-center text-gray-400 mt-10">Loading artists...</p>
-      ) : tokenError ? (
+      ) : error ? (
         <p className="text-center text-red-500 mt-10">
-          Error fetching Spotify token: {tokenError}
+          Error fetching artists: {error}
         </p>
       ) : (
-        <Artists spotifyToken={spotifyToken} artistIds={artistIds} />
+        <Artists spotifyData={spotifyData} />
       )}
 
       <Contact />
@@ -68,4 +63,3 @@ const HRCrewMusicStudio = () => {
 };
 
 export default HRCrewMusicStudio;
-
