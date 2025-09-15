@@ -98,16 +98,16 @@ const HRCrewMusicStudio = () => {
       />
 
       {/* Sections */}
-      <section ref={homeRef} className="w-full min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-12">
+      <section ref={homeRef} className="w-full min-h-screen">
         <Hero />
       </section>
 
-      <section ref={aboutRef} className="w-full py-16 px-4 sm:px-6 md:px-12 max-w-6xl mx-auto">
+      <section ref={aboutRef} className="w-full py-16">
         <About />
       </section>
 
       {/* Artists Section */}
-      <section ref={artistsRef} className="py-16 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
+      <section ref={artistsRef} className="w-full py-16">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10">
           Our Artists
         </h2>
@@ -121,7 +121,7 @@ const HRCrewMusicStudio = () => {
       </section>
 
       {/* Contact Section */}
-      <section ref={contactRef} className="py-16 px-4 sm:px-6 md:px-12 max-w-5xl mx-auto">
+      <section ref={contactRef} className="w-full py-16">
         <Contact />
       </section>
     </div>
