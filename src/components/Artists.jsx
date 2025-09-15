@@ -1,16 +1,15 @@
 import React, { useRef, useEffect, useState } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Artists = ({ spotifyData }) => {
   const containerRef = useRef(null);
-  const x = useMotionValue(0); // track horizontal scroll
   const [repeatCount, setRepeatCount] = useState(2);
 
   // Dynamically calculate repeats for seamless loop
   useEffect(() => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth;
-      const logoWidth = 160 + 40; // approx width + gap
+      const logoWidth = 160 + 40; // approx logo width + gap
       const requiredRepeats = Math.ceil(containerWidth / (spotifyData.length * logoWidth)) + 1;
       setRepeatCount(requiredRepeats);
     }
@@ -20,17 +19,10 @@ const Artists = ({ spotifyData }) => {
     .fill(spotifyData)
     .flat();
 
-  // Parallax: scale logos based on their x position
-  const getScale = (index) => {
-    const input = [index * 200 - 200, index * 200, index * 200 + 200];
-    return useTransform(x, input, [0.9, 1.1, 0.9]);
-  };
-
   return (
     <div ref={containerRef} className="overflow-hidden py-12 bg-gray-900">
       <motion.div
         className="flex gap-10 w-max"
-        style={{ x }}
         animate={{ x: ["0%", "-50%"] }}
         transition={{
           repeat: Infinity,
@@ -46,8 +38,8 @@ const Artists = ({ spotifyData }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center flex-shrink-0"
-            style={{ scale: getScale(index) }}
-            initial={{ opacity: 0.8 }}
+            whileHover={{ scale: 1.1 }} // subtle zoom on hover
+            initial={{ opacity: 0.85 }}
             animate={{ opacity: 1 }}
             transition={{
               duration: 2,
