@@ -11,7 +11,7 @@ const Hero = () => {
       className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
     >
       {/* Background visualizers pinned to Hero */}
-      <div className="absolute inset-0 z-20">
+      <div className="absolute bottom-0 left-0 right-0 h-40 z-20 pointer-events-none">
         <MusicVisualizer />
         <TrailCanvas />
       </div>
