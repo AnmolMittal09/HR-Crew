@@ -106,8 +106,7 @@ section {
 /* Tablets */
 @media (max-width: 1024px) {
   section {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    width: 100%;
   }
 }
 
