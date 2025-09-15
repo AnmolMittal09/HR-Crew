@@ -14,9 +14,6 @@ const Artists = ({ spotifyData }) => {
             className="w-full h-56 object-cover rounded-lg mb-4"
           />
           <h3 className="text-xl font-semibold mb-2">{artist.name}</h3>
-          <p className="text-gray-400">
-            Followers: {artist.followers?.total.toLocaleString()}
-          </p>
           <a
             href={artist.external_urls?.spotify}
             target="_blank"
