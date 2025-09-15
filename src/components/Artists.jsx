@@ -1,37 +1,15 @@
-import React, { useState } from "react";
-import { motion, useAnimation } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 
 const Artists = ({ spotifyData }) => {
-  // Duplicate the array for seamless loop
+  // Duplicate the array enough times for seamless loop
   const scrollingArtists = [...spotifyData, ...spotifyData];
-  const controls = useAnimation();
-
-  const handleMouseEnter = () => {
-    controls.stop(); // Pause the scrolling
-  };
-
-  const handleMouseLeave = () => {
-    controls.start({
-      x: ["0%", "-50%"],
-      transition: {
-        repeat: Infinity,
-        repeatType: "loop",
-        duration: 25,
-        ease: "linear",
-      },
-    });
-  };
 
   return (
-    <div
-      className="overflow-hidden py-12 bg-gray-900"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="overflow-hidden py-12 bg-gray-900">
       <motion.div
-        className="flex gap-10"
-        animate={controls}
-        initial={{ x: 0 }}
+        className="flex w-max gap-10"
+        animate={{ x: ["0%", "-50%"] }}
         transition={{
           repeat: Infinity,
           repeatType: "loop",
@@ -69,4 +47,3 @@ const Artists = ({ spotifyData }) => {
 };
 
 export default Artists;
-
