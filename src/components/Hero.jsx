@@ -1,26 +1,30 @@
-// Hero.jsx
-import React from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import MusicVisualizer from "./MusicVisualizer";
 import TrailCanvas from "./TrailCanvas";
 
 const Hero = () => {
+  const textRef = useRef(null);
+
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
+      className="relative w-full min-h-screen flex flex-col justify-center items-center overflow-hidden bg-gray-900"
     >
-      {/* Dark overlay below visualizer */}
-      <div className="absolute inset-0 bg-black/60 z-20" />
-
-      {/* Visualizers pinned at bottom of Hero */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 z-30 pointer-events-none">
-        <MusicVisualizer />
+      {/* Trail background */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
         <TrailCanvas />
       </div>
 
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/60 z-20" />
+
+      {/* Music visualizer (dynamic height) */}
+      <MusicVisualizer textRef={textRef} />
+
       {/* Foreground content */}
       <motion.div
+        ref={textRef}
         className="relative text-center z-40 w-full max-w-5xl mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

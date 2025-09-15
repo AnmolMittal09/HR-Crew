@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-const MusicVisualizer = () => {
+const MusicVisualizer = ({ textRef }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -15,7 +15,12 @@ const MusicVisualizer = () => {
 
     const resize = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+
+      // Compute canvas height: from bottom of Hero to top of text
+      const heroHeight = canvas.parentElement.offsetHeight;
+      const textTop = textRef.current?.offsetTop || 0;
+      canvas.height = heroHeight - textTop; // fills space up to text
+
       const barCount = window.innerWidth < 768 ? 40 : 80;
       if (bars.length !== barCount) initializeBars(barCount);
     };
@@ -45,7 +50,7 @@ const MusicVisualizer = () => {
         bars[i] = bars[i] + (targetHeight - bars[i]) * 0.1;
 
         const x = i * barWidth;
-        const barHeight = (bars[i] / 100) * (canvas.height / 2);
+        const barHeight = (bars[i] / 100) * canvas.height; // scaled to dynamic height
 
         const gradient = ctx.createLinearGradient(
           x,
@@ -70,9 +75,14 @@ const MusicVisualizer = () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [textRef]);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 z-10" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute bottom-0 left-0 w-full z-30 pointer-events-none"
+    />
+  );
 };
 
 export default MusicVisualizer;
