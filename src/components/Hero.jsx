@@ -1,27 +1,33 @@
-import { motion } from "framer-motion";
+// Hero.jsx
+import React, { useRef } from "react";
+import TrailCanvas from "./TrailCanvas";
+import MusicVisualizer from "./MusicVisualizer";
 
-export default function Hero() {
+const Hero = () => {
+  const audioRef = useRef(null); // For future real audio connection
+
   return (
-    <section
-      id="home"
-      className="relative h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white"
-    >
-      <motion.div
-        className="relative text-center z-40"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <h1 className="text-6xl font-bold">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
-            HR CREW
-          </span>
-          <br /> MUSIC STUDIO
-        </h1>
-        <p className="mt-6 text-gray-300 text-xl">
-          Where creativity meets technology 🎶
-        </p>
-      </motion.div>
-    </section>
+    <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-gray-900">
+      {/* Trail background */}
+      <TrailCanvas />
+
+      {/* Music visualizer mid-layer */}
+      <MusicVisualizer />
+
+      {/* Foreground content */}
+      <h1 className="text-6xl font-bold text-white z-20 relative text-center">
+        HR Crew Music Studio
+      </h1>
+
+      {/* Optional audio controls */}
+      <audio
+        ref={audioRef}
+        src="/audio/sample.mp3"
+        controls
+        className="mt-5 z-20 relative"
+      />
+    </div>
   );
-}
+};
+
+export default Hero;
