@@ -10,9 +10,11 @@ const Hero = () => {
       id="home"
       className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
     >
-      {/* Background visualizers */}
-      <MusicVisualizer />
-      <TrailCanvas />
+      {/* Background visualizers pinned to Hero */}
+      <div className="absolute inset-0 z-20">
+        <MusicVisualizer />
+        <TrailCanvas />
+      </div>
 
       {/* Overlay to darken background */}
       <div className="absolute inset-0 bg-black/60 z-30" />
