@@ -10,7 +10,7 @@ const Contact = () => {
           <MapPin className="mr-2" /> 123 Music Avenue
         </p>
         <p className="flex items-center justify-center">
-          <Phone className="mr-2" /> +1 555 123456
+          <Phone className="mr-2" /> +1 971717123456
         </p>
         <p className="flex items-center justify-center">
           <Mail className="mr-2" /> info@hrcrew.com
