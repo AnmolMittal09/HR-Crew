@@ -1,4 +1,4 @@
-import HRCrewMusicStudio from './HRCrewMusicStudio';
+import HRCrewMusicStudio from './HRCrewMusicStudio.jsx';
 
 function App() {
   return <HRCrewMusicStudio />;

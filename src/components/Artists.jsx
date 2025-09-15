@@ -16,7 +16,7 @@ const Artists = ({ artistIds }) => {
         setError(null);
 
         // 1️⃣ Get token from our serverless API route
-        const tokenRes = await fetch("/api/spotify-token");
+        const tokenRes = await fetch("/api/spotify.js");
         const tokenData = await tokenRes.json();
         const spotifyToken = tokenData.access_token;
 
