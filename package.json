@@ -15,12 +15,14 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject",
-  "deploy": "git add . && git commit -m \"update %date% %time%\" && git push origin main"
-},
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "git add . && git commit -m \"update %date% %time%\" && git push origin main",
+    "server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm start\""
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -43,6 +45,8 @@
     "@tailwindcss/postcss": "^4.1.13",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "concurrently": "^8.2.0",
+    "nodemon": "^3.0.2"
   }
 }
