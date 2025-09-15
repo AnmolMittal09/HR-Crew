@@ -1,14 +1,36 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect, useState } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 
 const Artists = ({ spotifyData }) => {
-  // Duplicate the array enough times for seamless loop
-  const scrollingArtists = [...spotifyData, ...spotifyData];
+  const containerRef = useRef(null);
+  const x = useMotionValue(0); // track horizontal scroll
+  const [repeatCount, setRepeatCount] = useState(2);
+
+  // Dynamically calculate repeats for seamless loop
+  useEffect(() => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const logoWidth = 160 + 40; // approx width + gap
+      const requiredRepeats = Math.ceil(containerWidth / (spotifyData.length * logoWidth)) + 1;
+      setRepeatCount(requiredRepeats);
+    }
+  }, [spotifyData]);
+
+  const scrollingArtists = Array(repeatCount)
+    .fill(spotifyData)
+    .flat();
+
+  // Parallax: scale logos based on their x position
+  const getScale = (index) => {
+    const input = [index * 200 - 200, index * 200, index * 200 + 200];
+    return useTransform(x, input, [0.9, 1.1, 0.9]);
+  };
 
   return (
-    <div className="overflow-hidden py-12 bg-gray-900">
+    <div ref={containerRef} className="overflow-hidden py-12 bg-gray-900">
       <motion.div
-        className="flex w-max gap-10"
+        className="flex gap-10 w-max"
+        style={{ x }}
         animate={{ x: ["0%", "-50%"] }}
         transition={{
           repeat: Infinity,
@@ -24,13 +46,14 @@ const Artists = ({ spotifyData }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center flex-shrink-0"
-            initial={{ opacity: 0.8, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            style={{ scale: getScale(index) }}
+            initial={{ opacity: 0.8 }}
+            animate={{ opacity: 1 }}
             transition={{
               duration: 2,
               repeat: Infinity,
               repeatType: "mirror",
-              delay: index * 0.2,
+              delay: (index % spotifyData.length) * 0.2,
             }}
           >
             <img
