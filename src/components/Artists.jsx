@@ -1,64 +1,59 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, useAnimation } from "framer-motion";
 
 const Artists = ({ spotifyData }) => {
-  // Duplicate array for seamless looping
+  // Duplicate the array for seamless loop
   const scrollingArtists = [...spotifyData, ...spotifyData];
+  const controls = useAnimation();
 
-  const rowTransition = {
-    repeat: Infinity,
-    repeatType: "loop",
-    duration: 25,
-    ease: "linear",
+  const handleMouseEnter = () => {
+    controls.stop(); // Pause the scrolling
+  };
+
+  const handleMouseLeave = () => {
+    controls.start({
+      x: ["0%", "-50%"],
+      transition: {
+        repeat: Infinity,
+        repeatType: "loop",
+        duration: 25,
+        ease: "linear",
+      },
+    });
   };
 
   return (
-    <div className="overflow-hidden py-12 bg-gray-900">
-      {/* First row */}
-      <motion.div
-        className="flex gap-10 mb-10"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={rowTransition}
-      >
-        {scrollingArtists.map((artist, index) => (
-          <motion.a
-            key={`row1-${index}`}
-            href={artist.external_urls?.spotify}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center"
-            whileHover={{ scale: 1.1, opacity: 1 }}
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: 0.9 }}
-            transition={{ duration: 1 }}
-          >
-            <img
-              src={artist.images[0]?.url || "/placeholder.png"}
-              alt={artist.name}
-              className="w-36 h-36 md:w-40 md:h-40 object-cover rounded-full border-2 border-green-400 shadow-lg"
-            />
-            <h3 className="mt-3 text-lg font-semibold text-center">{artist.name}</h3>
-          </motion.a>
-        ))}
-      </motion.div>
-
-      {/* Second row (slightly offset, speed can differ for cinematic effect) */}
+    <div
+      className="overflow-hidden py-12 bg-gray-900"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <motion.div
         className="flex gap-10"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ ...rowTransition, duration: 28 }}
+        animate={controls}
+        initial={{ x: 0 }}
+        transition={{
+          repeat: Infinity,
+          repeatType: "loop",
+          duration: 25,
+          ease: "linear",
+        }}
       >
         {scrollingArtists.map((artist, index) => (
           <motion.a
-            key={`row2-${index}`}
+            key={index}
             href={artist.external_urls?.spotify}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center"
-            whileHover={{ scale: 1.1, opacity: 1 }}
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: 0.9 }}
-            transition={{ duration: 1 }}
+            className="flex flex-col items-center flex-shrink-0"
+            initial={{ opacity: 0.8, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "mirror",
+              delay: index * 0.2,
+            }}
           >
             <img
               src={artist.images[0]?.url || "/placeholder.png"}
@@ -74,3 +69,4 @@ const Artists = ({ spotifyData }) => {
 };
 
 export default Artists;
+
