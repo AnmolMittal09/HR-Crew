@@ -19,9 +19,10 @@ const MusicVisualizer = ({ textRef }) => {
       // Compute canvas height: from bottom of Hero to top of text
       const heroHeight = canvas.parentElement.offsetHeight;
       const textTop = textRef.current?.offsetTop || 0;
-      canvas.height = heroHeight - textTop; // fills space up to text
+      canvas.height = heroHeight - textTop;
 
-      const barCount = window.innerWidth < 768 ? 40 : 80;
+      // ✅ Reduce bar count on mobile
+      const barCount = window.innerWidth < 768 ? 30 : 80;
       if (bars.length !== barCount) initializeBars(barCount);
     };
 
@@ -43,6 +44,7 @@ const MusicVisualizer = ({ textRef }) => {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const barWidth = canvas.width / bars.length;
+      const isMobile = window.innerWidth < 768;
 
       bars.forEach((h, i) => {
         const spectrum = getFakeSpectrum(i, bars.length);
@@ -50,7 +52,8 @@ const MusicVisualizer = ({ textRef }) => {
         bars[i] = bars[i] + (targetHeight - bars[i]) * 0.1;
 
         const x = i * barWidth;
-        const barHeight = (bars[i] / 100) * canvas.height; // scaled to dynamic height
+        const barHeight =
+          (bars[i] / 100) * canvas.height * (isMobile ? 0.9 : 1); // ✅ reduce 10% height on mobile
 
         const gradient = ctx.createLinearGradient(
           x,
@@ -63,7 +66,12 @@ const MusicVisualizer = ({ textRef }) => {
         gradient.addColorStop(1, "#06b6d4");
 
         ctx.fillStyle = gradient;
-        ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+        ctx.fillRect(
+          x,
+          canvas.height - barHeight,
+          barWidth - (isMobile ? 4 : 2), // ✅ more spacing on mobile
+          barHeight
+        );
       });
 
       animationId = requestAnimationFrame(draw);
