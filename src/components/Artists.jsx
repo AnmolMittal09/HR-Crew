@@ -1,117 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { FaSpotify } from "react-icons/fa";
+import React from "react";
 
-const Artists = ({ artistIds }) => {
-  const [artists, setArtists] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchArtists = async () => {
-      if (!artistIds?.length) return;
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        // 1️⃣ Get token from our serverless API route
-        const tokenRes = await fetch("/api/spotify.js");
-        const tokenData = await tokenRes.json();
-        const spotifyToken = tokenData.access_token;
-
-        // 2️⃣ Fetch all artist details
-        const fetchedArtists = await Promise.all(
-          artistIds.map(async (id) => {
-            const res = await fetch(`https://api.spotify.com/v1/artists/${id}`, {
-              headers: { Authorization: `Bearer ${spotifyToken}` },
-            });
-            if (!res.ok) throw new Error(`Failed to fetch artist ${id}`);
-            const data = await res.json();
-            return {
-              name: data.name,
-              img: data.images[0]?.url || "",
-              spotify: data.external_urls.spotify || "",
-            };
-          })
-        );
-
-        setArtists(fetchedArtists);
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArtists();
-  }, [artistIds]);
-
-  if (loading) {
-    return (
-      <section id="artists" className="py-20 bg-gray-900 text-center">
-        <h2 className="text-4xl font-bold mb-6">Featured Artists</h2>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 px-6">
-          {[1, 2, 3].map((n) => (
-            <div
-              key={n}
-              className="bg-gray-800 p-6 rounded-lg animate-pulse h-64 flex flex-col items-center justify-center"
-            >
-              <div className="w-32 h-32 bg-gray-700 rounded-full mb-4"></div>
-              <div className="w-24 h-4 bg-gray-700 rounded mb-2"></div>
-              <div className="w-16 h-4 bg-gray-700 rounded"></div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section id="artists" className="py-20 bg-gray-900 text-center">
-        <h2 className="text-4xl font-bold mb-6">Featured Artists</h2>
-        <p className="text-red-500">{error}</p>
-      </section>
-    );
-  }
-
+const Artists = ({ spotifyData }) => {
   return (
-    <section id="artists" className="py-20 bg-gray-900 text-center">
-      <h2 className="text-4xl font-bold mb-6">Featured Artists</h2>
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 px-6">
-        {artists.map((artist, i) => (
-          <motion.div
-            key={i}
-            whileHover={{ scale: 1.05 }}
-            className="bg-gray-800 p-6 rounded-lg transition-transform duration-500 relative"
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 md:px-16">
+      {spotifyData.map((artist) => (
+        <div
+          key={artist.id}
+          className="bg-gray-800 rounded-xl p-4 text-center hover:scale-105 transition-transform"
+        >
+          <img
+            src={artist.images[0]?.url || "/placeholder.png"}
+            alt={artist.name}
+            className="w-full h-56 object-cover rounded-lg mb-4"
+          />
+          <h3 className="text-xl font-semibold mb-2">{artist.name}</h3>
+          <p className="text-gray-400">
+            Followers: {artist.followers?.total.toLocaleString()}
+          </p>
+          <a
+            href={artist.external_urls?.spotify}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-3 text-green-400 hover:underline"
           >
-            {artist.img ? (
-              <img
-                src={artist.img}
-                alt={artist.name}
-                className="w-full h-48 object-cover rounded-lg mb-2"
-              />
-            ) : (
-              <div className="w-full h-48 bg-gray-700 rounded-lg mb-2" />
-            )}
-            <h3 className="font-bold">{artist.name}</h3>
-            {artist.spotify && (
-              <a
-                href={artist.spotify}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="absolute top-4 right-4 text-green-500 hover:text-green-400"
-                title="Listen on Spotify"
-              >
-                <FaSpotify size={28} />
-              </a>
-            )}
-          </motion.div>
-        ))}
-      </div>
-    </section>
+            View on Spotify
+          </a>
+        </div>
+      ))}
+    </div>
   );
 };
 

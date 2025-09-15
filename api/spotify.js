@@ -1,20 +1,22 @@
-// api/spotify-token.js (Vercel serverless)
+// api/spotify.js
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { artistId } = req.query;
+  if (!artistId) {
+    return res.status(400).json({ error: "artistId query param is required" });
   }
 
   try {
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-    if (!clientId || !clientSecret) {
-      return res.status(500).json({ error: "Spotify credentials not set" });
-    }
-
     const authString = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
-    const response = await fetch("https://accounts.spotify.com/api/token", {
+    // Get Spotify access token
+    const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
       headers: {
         Authorization: `Basic ${authString}`,
@@ -23,15 +25,24 @@ export default async function handler(req, res) {
       body: "grant_type=client_credentials",
     });
 
-    const data = await response.json();
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
 
-    if (response.ok) {
-      res.status(200).json(data);
-    } else {
-      res.status(response.status).json({ error: data });
+    if (!accessToken) {
+      return res.status(500).json({ error: "Failed to get access token" });
     }
+
+    // Fetch artist data from Spotify
+    const artistResponse = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const artistData = await artistResponse.json();
+    res.status(200).json(artistData);
   } catch (err) {
-    console.error("Error fetching Spotify token:", err);
-    res.status(500).json({ error: "Failed to fetch token" });
+    console.error("Error fetching artist:", err);
+    res.status(500).json({ error: "Failed to fetch artist data" });
   }
 }

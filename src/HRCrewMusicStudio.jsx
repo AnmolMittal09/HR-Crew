@@ -6,7 +6,7 @@ import Artists from "./components/Artists";
 import Contact from "./components/Contact";
 
 const artistIds = [
-  "2ksQOaJEKZUywWIKeeZlJK", // Example Artist
+  "2ksQOaJEKZUywWIKeeZlJK",
   "7wi8IlXwOdKRyozkRKEeSr",
   "56yZJfVlHvxGyowJfihwH3",
 ];
@@ -22,7 +22,6 @@ const HRCrewMusicStudio = () => {
         setLoading(true);
         setError(null);
 
-        // call our vercel serverless API
         const responses = await Promise.all(
           artistIds.map((id) =>
             fetch(`/api/spotify?artistId=${id}`).then((res) => res.json())
@@ -32,7 +31,7 @@ const HRCrewMusicStudio = () => {
         setSpotifyData(responses);
       } catch (err) {
         console.error("Failed to fetch artists:", err);
-        setError(err.message);
+        setError("Something went wrong while fetching artists");
       } finally {
         setLoading(false);
       }
@@ -42,20 +41,21 @@ const HRCrewMusicStudio = () => {
   }, []);
 
   return (
-    <div className="bg-gray-900 text-white relative overflow-x-hidden">
+    <div className="bg-gray-900 text-white min-h-screen">
       <Navbar />
       <Hero />
       <About />
 
-      {loading ? (
-        <p className="text-center text-gray-400 mt-10">Loading artists...</p>
-      ) : error ? (
-        <p className="text-center text-red-500 mt-10">
-          Error fetching artists: {error}
-        </p>
-      ) : (
-        <Artists spotifyData={spotifyData} />
-      )}
+      <section className="py-16">
+        <h2 className="text-4xl font-bold text-center mb-10">Our Artists</h2>
+        {loading ? (
+          <p className="text-center text-gray-400">Loading artists...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <Artists spotifyData={spotifyData} />
+        )}
+      </section>
 
       <Contact />
     </div>
