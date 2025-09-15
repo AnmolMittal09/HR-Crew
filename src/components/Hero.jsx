@@ -10,18 +10,18 @@ const Hero = () => {
       id="home"
       className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
     >
-      {/* Background visualizers pinned to Hero */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 z-20 pointer-events-none">
+      {/* Dark overlay below visualizer */}
+      <div className="absolute inset-0 bg-black/60 z-20" />
+
+      {/* Visualizers pinned at bottom of Hero */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 z-30 pointer-events-none">
         <MusicVisualizer />
         <TrailCanvas />
       </div>
 
-      {/* Overlay to darken background */}
-      <div className="absolute inset-0 bg-black/60 z-30" />
-
       {/* Foreground content */}
       <motion.div
-        className="relative text-center z-40 px-4 sm:px-6 md:px-8"
+        className="relative text-center z-40 w-full max-w-5xl mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
