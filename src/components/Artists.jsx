@@ -2,27 +2,38 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const Artists = ({ spotifyData }) => {
+  // Duplicate the array for seamless infinite scroll
+  const scrollingArtists = [...spotifyData, ...spotifyData];
+
   return (
-    <div className="flex flex-wrap justify-center gap-8 px-4 md:px-16 py-8">
-      {spotifyData.map((artist, index) => (
-        <motion.a
-          key={artist.id}
-          href={artist.external_urls?.spotify}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-col items-center"
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: index * 0.2, type: "spring", stiffness: 100 }}
-        >
-          <img
-            src={artist.images[0]?.url || "/placeholder.png"}
-            alt={artist.name}
-            className="w-32 h-32 object-cover rounded-full border-2 border-green-400 shadow-lg hover:scale-105 transition-transform"
-          />
-          <h3 className="mt-3 text-lg font-semibold text-center">{artist.name}</h3>
-        </motion.a>
-      ))}
+    <div className="overflow-hidden py-8 bg-gray-900">
+      <motion.div
+        className="flex gap-8"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{
+          repeat: Infinity,
+          repeatType: "loop",
+          duration: 20,
+          ease: "linear",
+        }}
+      >
+        {scrollingArtists.map((artist, index) => (
+          <a
+            key={index}
+            href={artist.external_urls?.spotify}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center"
+          >
+            <img
+              src={artist.images[0]?.url || "/placeholder.png"}
+              alt={artist.name}
+              className="w-24 h-24 object-cover rounded-full border-2 border-green-400 shadow-lg"
+            />
+            <h3 className="mt-2 text-sm font-semibold text-center">{artist.name}</h3>
+          </a>
+        ))}
+      </motion.div>
     </div>
   );
 };
