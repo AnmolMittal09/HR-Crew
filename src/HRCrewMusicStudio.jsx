@@ -6,9 +6,10 @@ import Artists from "./components/Artists";
 import Contact from "./components/Contact";
 
 const artistIds = [
-  "2ksQOaJEKZUywWIKeeZlJK",
+  "61SDFLPIjtLsMeGPSLqbhZ",
   "7wi8IlXwOdKRyozkRKEeSr",
   "56yZJfVlHvxGyowJfihwH3",
+  "4NUHbtrp2qBYd3dLcZf4wY",
 ];
 
 const HRCrewMusicStudio = () => {
