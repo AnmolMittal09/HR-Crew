@@ -1,27 +1,70 @@
-import React from "react";
-import MusicVisualizer from "./MusicVisualizer";
-import TrailCanvas from "./TrailCanvas";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 const Hero = () => {
+  const [artistData, setArtistData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArtist = async () => {
+      try {
+        const res = await fetch("/api/spotify?artistId=2ksQOaJEKZUywWIKeeZlJK");
+        const data = await res.json();
+        setArtistData(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArtist();
+  }, []);
+
+  if (loading) return <div className="text-center py-20">Loading HR Crew...</div>;
+  if (!artistData) return null;
+
   return (
-    <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-      <MusicVisualizer />
-      <TrailCanvas />
-      <div className="absolute inset-0 bg-black/60 z-30" />
+    <section className="py-16 bg-gradient-to-r from-purple-600 to-cyan-400 text-white">
+      <div className="flex flex-col items-center mb-10">
+        <img
+          src={artistData.artist.images[0]?.url}
+          alt={artistData.artist.name}
+          className="w-40 h-40 rounded-full border-4 border-white mb-4"
+        />
+        <h1 className="text-4xl font-bold">{artistData.artist.name}</h1>
+        <a
+          href={artistData.artist.external_urls.spotify}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 px-4 py-2 bg-white text-black rounded-lg font-semibold"
+        >
+          View on Spotify
+        </a>
+      </div>
+
+      {/* Horizontal Carousel of Tracks */}
       <motion.div
-        className="relative text-center z-40"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
+        className="flex gap-6 overflow-x-auto px-4 cursor-grab"
+        whileTap={{ cursor: "grabbing" }}
       >
-        <h1 className="text-6xl font-bold">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
-            HR CREW
-          </span>
-          <br /> MUSIC STUDIO
-        </h1>
-        <p className="mt-6 text-gray-300 text-xl">Where creativity meets technology 🎶</p>
+        {artistData.tracks.map((track) => (
+          <motion.a
+            key={track.id}
+            href={track.external_urls.spotify}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 w-56 sm:w-64 md:w-72 bg-black bg-opacity-50 rounded-lg p-4 hover:bg-opacity-70 transition"
+          >
+            <img
+              src={track.album.images[0]?.url}
+              alt={track.name}
+              className="w-full h-40 object-cover rounded-lg mb-3"
+            />
+            <p className="font-semibold text-white">{track.name}</p>
+            <p className="text-sm text-gray-300">{track.album.name}</p>
+          </motion.a>
+        ))}
       </motion.div>
     </section>
   );

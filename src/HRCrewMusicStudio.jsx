@@ -34,6 +34,7 @@ const HRCrewMusicStudio = () => {
     contact: contactRef,
   };
 
+  // Smooth scroll to section
   const scrollToSection = (section) => {
     const ref = sectionRefs[section];
     if (ref && ref.current) {
@@ -61,16 +62,19 @@ const HRCrewMusicStudio = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Fetch Spotify artists
   useEffect(() => {
     const fetchArtists = async () => {
       try {
         setLoading(true);
         setError(null);
+
         const responses = await Promise.all(
           artistIds.map((id) =>
             fetch(`/api/spotify?artistId=${id}`).then((res) => res.json())
           )
         );
+
         setSpotifyData(responses);
       } catch (err) {
         console.error("Failed to fetch artists:", err);
@@ -79,11 +83,13 @@ const HRCrewMusicStudio = () => {
         setLoading(false);
       }
     };
+
     fetchArtists();
   }, []);
 
   return (
     <div className="bg-gray-900 text-white min-h-screen">
+      {/* Navbar */}
       <Navbar
         activeSection={activeSection}
         scrollToSection={scrollToSection}
@@ -91,9 +97,11 @@ const HRCrewMusicStudio = () => {
         setMenuOpen={setMenuOpen}
       />
 
+      {/* Sections */}
       <section ref={homeRef}><Hero /></section>
       <section ref={aboutRef}><About /></section>
 
+      {/* Artists Section */}
       <section ref={artistsRef} className="py-16">
         <h2 className="text-4xl font-bold text-center mb-10">Our Artists</h2>
         {loading ? (
@@ -105,6 +113,7 @@ const HRCrewMusicStudio = () => {
         )}
       </section>
 
+      {/* Contact Section */}
       <section ref={contactRef}><Contact /></section>
     </div>
   );
