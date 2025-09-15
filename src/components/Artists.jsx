@@ -1,52 +1,58 @@
-import React, { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 
 const Artists = ({ spotifyData }) => {
   const containerRef = useRef(null);
-  const [repeatCount, setRepeatCount] = useState(2);
+  const x = useMotionValue(0);
+  const [logos, setLogos] = useState([]);
 
-  // Dynamically calculate repeats for seamless loop
+  // Duplicate logos for seamless looping
   useEffect(() => {
-    if (containerRef.current) {
-      const containerWidth = containerRef.current.offsetWidth;
-      const logoWidth = 160 + 40; // approx logo width + gap
-      const requiredRepeats = Math.ceil(containerWidth / (spotifyData.length * logoWidth)) + 1;
-      setRepeatCount(requiredRepeats);
-    }
+    setLogos([...spotifyData, ...spotifyData, ...spotifyData]);
   }, [spotifyData]);
 
-  const scrollingArtists = Array(repeatCount)
-    .fill(spotifyData)
-    .flat();
+  // Track container width
+  const [containerWidth, setContainerWidth] = useState(0);
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerWidth(containerRef.current.offsetWidth);
+    }
+  }, [logos]);
+
+  // Handle repositioning logos for infinite effect
+  useEffect(() => {
+    const unsubscribe = x.onChange((latest) => {
+      const totalWidth = logos.length * 200; // approx logo + gap
+      if (latest <= -totalWidth / 3) {
+        x.set(latest + totalWidth / 3);
+      } else if (latest >= 0) {
+        x.set(latest - totalWidth / 3);
+      }
+    });
+    return () => unsubscribe();
+  }, [x, logos]);
 
   return (
-    <div ref={containerRef} className="overflow-hidden py-12 bg-gray-900">
+    <div
+      ref={containerRef}
+      className="overflow-hidden py-12 bg-gray-900 cursor-grab"
+    >
       <motion.div
-        className="flex gap-10 w-max"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: 25,
-          ease: "linear",
-        }}
+        className="flex gap-10"
+        style={{ x }}
+        drag="x"
+        dragElastic={0.15}
+        dragConstraints={{ left: 0, right: 0 }}
+        whileTap={{ cursor: "grabbing" }}
       >
-        {scrollingArtists.map((artist, index) => (
+        {logos.map((artist, index) => (
           <motion.a
-            key={index}
+            key={index + artist.id} // unique key
             href={artist.external_urls?.spotify}
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center flex-shrink-0"
-            whileHover={{ scale: 1.1 }} // subtle zoom on hover
-            initial={{ opacity: 0.85 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatType: "mirror",
-              delay: (index % spotifyData.length) * 0.2,
-            }}
+            whileHover={{ scale: 1.1 }}
           >
             <img
               src={artist.images[0]?.url || "/placeholder.png"}
