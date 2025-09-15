@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/AnmolMittal09/HR-Crew/static/css/main.ef3c411f.css",
+    "main.js": "/AnmolMittal09/HR-Crew/static/js/main.86fb224d.js",
+    "static/js/488.2c968221.chunk.js": "/AnmolMittal09/HR-Crew/static/js/488.2c968221.chunk.js",
+    "static/media/anmol.jpg": "/AnmolMittal09/HR-Crew/static/media/anmol.31f831d676bdcf349fca.jpg",
+    "static/media/harsh.jpg": "/AnmolMittal09/HR-Crew/static/media/harsh.ff17f93b4e7d8a97acd7.jpg",
+    "index.html": "/AnmolMittal09/HR-Crew/index.html",
+    "main.ef3c411f.css.map": "/AnmolMittal09/HR-Crew/static/css/main.ef3c411f.css.map",
+    "main.86fb224d.js.map": "/AnmolMittal09/HR-Crew/static/js/main.86fb224d.js.map",
+    "488.2c968221.chunk.js.map": "/AnmolMittal09/HR-Crew/static/js/488.2c968221.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ef3c411f.css",
+    "static/js/main.86fb224d.js"
+  ]
+}
