@@ -5,10 +5,11 @@ const Artists = ({ spotifyData }) => {
   const containerRef = useRef(null);
   const mouseX = useMotionValue(0);
 
-  const isDesktop = typeof window !== "undefined" ? window.innerWidth > 768 : true;
+  // Always call useTransform, but output 0 rotation on mobile
+  const rotateYRaw = useTransform(mouseX, [0, window.innerWidth], [-15, 15]);
 
-  // Gyroscopic effect only on desktop
-  const rotateY = isDesktop ? useTransform(mouseX, [0, window.innerWidth], [-15, 15]) : 0;
+  const isDesktop = typeof window !== "undefined" ? window.innerWidth > 768 : true;
+  const rotateY = isDesktop ? rotateYRaw : 0;
 
   return (
     <div
